@@ -24,20 +24,63 @@
             color: #2c3e50;
             text-align: center;
         }
-        .input-group {
+        .input-container {
+            max-width: 100%;
+            margin: 0 auto 20px;
+        }
+        .control-group {
             display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
+        }
+        #wordCount, button {
+            height: 40px;
+            padding: 0 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #3498db;
+            color: white;
+        }
+        #wordCount, button.primary-action {
+            width: 120px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+        }
+        button:hover, #wordCount:hover {
+            background-color: #2980b9;
+        }
+        body.dark-mode #wordCount, body.dark-mode button {
+            background-color: #5dade2;
+            color: #333;
+        }
+        body.dark-mode #wordCount:hover, body.dark-mode button:hover {
+            background-color: #3498db;
+        }
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 10px;
             margin-bottom: 20px;
         }
         .word-input {
-            width: calc(25% - 10px);
-            padding: 10px;
+            width: 100%;
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
             background-color: #fff;
             transition: all 0.3s ease;
+            box-sizing: border-box;
+            height: 40px;
         }
         .word-input:hover, .word-input:focus {
             border-color: #3498db;
@@ -45,6 +88,18 @@
         }
         .word-input.selected {
             background-color: #e0e0e0;
+        }
+        body.dark-mode .word-input {
+            background-color: #444;
+            color: #f4f4f4;
+            border-color: #666;
+        }
+        body.dark-mode .word-input:hover, body.dark-mode .word-input:focus {
+            border-color: #5dade2;
+            box-shadow: 0 0 5px rgba(93, 173, 226, 0.5);
+        }
+        body.dark-mode .word-input.selected {
+            background-color: #8e8e8e;
         }
         button, select {
             background-color: #3498db;
@@ -74,6 +129,10 @@
             color: #e0e0e0;
             border-color: #444;
         }
+        #result, .input-container {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
         #result h2 {
             color: #2c3e50;
             margin-top: 0;
@@ -102,12 +161,76 @@
         #result li {
             margin-bottom: 8px;
         }
-
         #result strong {
             color: #2980b9;
         }
         body.dark-mode #result strong {
             color: #ffd700;
+        }
+        #mnemonicExamples {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #3498db;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: rgba(52, 152, 219, 0.1);
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85em;
+            color: #2c3e50;
+            box-shadow: inset 0 0 10px rgba(52, 152, 219, 0.2);
+            transition: all 0.3s ease;
+        }
+        #mnemonicExamples::-webkit-scrollbar {
+            width: 8px;
+        }
+        #mnemonicExamples::-webkit-scrollbar-track {
+            background: rgba(52, 152, 219, 0.1);
+        }
+        #mnemonicExamples::-webkit-scrollbar-thumb {
+            background-color: #3498db;
+            border-radius: 4px;
+        }
+        #mnemonicExamples ol {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        #mnemonicExamples li {
+            margin-bottom: 8px;
+            padding: 5px 10px;
+            background-color: rgba(52, 152, 219, 0.05);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        #mnemonicExamples li:hover {
+            background-color: rgba(52, 152, 219, 0.2);
+            transform: translateX(5px);
+        }
+        #mnemonicExamples li::before {
+            content: "$ ";
+            color: #3498db;
+            font-weight: bold;
+        }
+        body.dark-mode #mnemonicExamples {
+            border-color: #5dade2;
+            background-color: rgba(93, 173, 226, 0.1);
+            color: #ecf0f1;
+            box-shadow: inset 0 0 10px rgba(93, 173, 226, 0.2);
+        }
+        body.dark-mode #mnemonicExamples::-webkit-scrollbar-track {
+            background: rgba(93, 173, 226, 0.1);
+        }
+        body.dark-mode #mnemonicExamples::-webkit-scrollbar-thumb {
+            background-color: #5dade2;
+        }
+        body.dark-mode #mnemonicExamples li {
+            background-color: rgba(93, 173, 226, 0.05);
+        }
+        body.dark-mode #mnemonicExamples li:hover {
+            background-color: rgba(93, 173, 226, 0.2);
+        }
+        body.dark-mode #mnemonicExamples li::before {
+            color: #5dade2;
         }
         .footer {
             margin-top: 20px;
@@ -162,28 +285,162 @@
             color: #ffd700;
             border-color: #665c33;
         }
+        @media (max-width: 600px) {
+            .control-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            #wordCount, button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body class="dark-mode">
     <h1>BIP39 Mnemonic Recovery Calculator</h1>
-    <select id="wordCount" onchange="updateInputFields()">
-        <option value="12">12 words</option>
-        <option value="15">15 words</option>
-        <option value="18">18 words</option>
-        <option value="21">21 words</option>
-        <option value="24">24 words</option>
-    </select>
-    <button onclick="generateMnemonic()">Generate Mnemonic</button>
-    <div class="input-group" id="wordInputs"></div>
-    <button onclick="calculate()">Calculate</button>
+    <div class="input-container">
+        <div class="control-group">
+            <select id="wordCount" onchange="updateInputFields()">
+                <option value="12">12 words</option>
+                <option value="15">15 words</option>
+                <option value="18">18 words</option>
+                <option value="21">21 words</option>
+                <option value="24">24 words</option>
+            </select>
+            <button onclick="generateMnemonic()">Generate Mnemonic</button>
+        </div>
+        <div class="input-group" id="wordInputs"></div>
+        <div class="control-group">
+            <button class="primary-action" onclick="calculate()">Calculate</button>
+            <button onclick="toggleExplanation()">About Calculate</button>
+        </div>
+    </div>
+
+    <!-- Add this div at the end of the body -->
+    <div id="explanationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h4>About BIP39 Mnemonic Generation</h4>
+            <p>BIP39 mnemonic sentences are generated using a specific process to ensure security and consistency:</p>
+            <ol>
+                <li>Initial entropy (128-256 bits) is generated.</li>
+                <li>A checksum is created by taking the first ENT/32 bits of the SHA256 hash of the entropy.</li>
+                <li>The checksum is appended to the entropy.</li>
+                <li>The result is split into 11-bit groups, each corresponding to a word from a 2048-word list.</li>
+            </ol>
+            <p>The relationship between entropy (ENT), checksum (CS), and mnemonic sentence length (MS) is:</p>
+            <pre>
+            CS = ENT / 32
+            MS = (ENT + CS) / 11
+            </pre>
+            <p>For a 12-word mnemonic (most common), this means:</p>
+            <ul>
+                <li>128 bits of entropy</li>
+                <li>4-bit checksum</li>
+                <li>132 bits total, split into 12 11-bit words</li>
+            </ul>
+            <p>The difficulty of guessing a valid mnemonic increases exponentially with the number of missing words. For each missing word, there are 2048 possibilities, but only a fraction will produce a valid checksum.</p>
+            <p>This calculator estimates the number of valid combinations and provides examples, helping to illustrate the security of BIP39 mnemonics.</p>
+            <p>For more informations, refer to: <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki" target="_blank">https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki</a></p>
+        </div>
+    </div>
+
+    <!-- Add this to your existing <style> section -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 5px;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        body.dark-mode .modal-content {
+            background-color: #333;
+            color: #f4f4f4;
+        }
+        body.dark-mode .close {
+            color: #f4f4f4;
+        }
+        body.dark-mode .close:hover,
+        body.dark-mode .close:focus {
+            color: #fff;
+        }
+        @media (max-height: 600px) {
+            .modal-content {
+                margin: 0 auto;
+                top: 0;
+                transform: none;
+                height: 100%;
+                overflow-y: auto;
+            }
+        }
+    </style>
+
+    <script>
+        function toggleExplanation() {
+            var modal = document.getElementById("explanationModal");
+            modal.style.display = "block";
+            document.body.style.overflow = "hidden"; // Prevent body scrolling
+        }
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            closeModal();
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            var modal = document.getElementById("explanationModal");
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("explanationModal");
+            modal.style.display = "none";
+            document.body.style.overflow = ""; // Restore body scrolling
+        }
+    </script>
+    
     <div id="result"></div>
     <div class="warning">
         <strong>Warning:</strong> Please do not paste or use mnemonic phrases associated with real funds. For research only. 
     </div>
     <div class="footer">
         <p>
-            For more operations related to mnemonic, refer to: <a href="https://iancoleman.io/bip39/" target="_blank">https://iancoleman.io/bip39/</a><br>
-            For more informations related to mnemonic, refer to: <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki" target="_blank">https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki</a>
+            For more operations related to mnemonic, refer to: <a href="https://iancoleman.io/bip39/" target="_blank">https://iancoleman.io/bip39/</a>
             
         </p>
         <p>By Cos(<a href="https://twitter.com/evilcos" target="_blank">@evilcos</a>, <a href="https://x.com/SlowMist_Team" target="_blank">@SlowMist_Team</a>), Thanks <a href="https://www.cursor.com/" target="_blank">Cursor</a>:) <a href="#" id="theme-toggle">Light Mode</a></p>
@@ -268,6 +525,7 @@
         const missingCount = missingIndices.length;
         let validCombinations = 0;
         let totalCombinations = Math.pow(2048, missingCount);
+        let validMnemonics = new Set();
 
         // Simplified checksum function
         function isValidChecksum(words) {
@@ -286,9 +544,9 @@
             let binaryHash = parseInt(hash.toString(), 16).toString(2).padStart(256, '0');
             return binaryHash.slice(0, checksumLength) === checksumBits;
         }
-
+        
         // Estimate valid combinations
-        let sampleSize = 10000;
+        let sampleSize = 10000; // Increased sample size
         for (let i = 0; i < sampleSize; i++) {
             let testMnemonic = [...mnemonic];
             missingIndices.forEach(index => {
@@ -296,6 +554,7 @@
             });
             if (isValidChecksum(testMnemonic)) {
                 validCombinations++;
+                validMnemonics.add(testMnemonic.join(' '));
             }
         }
 
@@ -303,17 +562,23 @@
 
         document.getElementById('result').innerHTML = `
             <h2>Results</h2>
-            <p><strong>Missing words:</strong> ${missingCount}</p>
-            <p><strong>Total combinations:</strong> ${totalCombinations.toLocaleString()}</p>
-            <p><strong>Estimated valid combinations:</strong> ${estimatedValidCombinations.toLocaleString()}</p>
-            <h3>Calculation process:</h3>
+            <p><strong>Missing Words:</strong> ${missingCount}</p>
+            <p><strong>Total Combinations:</strong> ${totalCombinations.toLocaleString()}</p>
+            <p><strong>Estimated Valid Combinations:</strong> ${estimatedValidCombinations.toLocaleString()}</p>
+            <h3>Calculation Process:</h3>
             <ol>
-                <li>Total combinations = 2048<sup>${missingCount}</sup> = ${totalCombinations.toLocaleString()}</li>
+                <li>Total Combinations = 2048<sup>${missingCount}</sup> = ${totalCombinations.toLocaleString()}</li>
                 <li>Sampled ${sampleSize.toLocaleString()} random combinations</li>
                 <li>Found ${validCombinations.toLocaleString()} valid combinations in the sample</li>
                 <li>Estimated valid ratio = ${validCombinations} / ${sampleSize} ≈ ${(validCombinations/sampleSize).toFixed(4)}</li>
                 <li>Estimated valid combinations = ${totalCombinations.toLocaleString()} * ${(validCombinations/sampleSize).toFixed(4)} ≈ ${estimatedValidCombinations.toLocaleString()}</li>
             </ol>
+            <h3>Valid Mnemonic Examples (${Math.min(100, validMnemonics.size)}):</h3>
+            <div id="mnemonicExamples">
+                <ol>
+                    ${Array.from(validMnemonics).slice(0, 100).map(mnemonic => `<li>${mnemonic}</li>`).join('')}
+                </ol>
+            </div>
         `;
     }
 
